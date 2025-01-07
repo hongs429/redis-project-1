@@ -1,0 +1,46 @@
+plugins {
+    id 'java' // 모든 모듈에 공통적으로 적용
+    id 'org.springframework.boot' version '3.4.1' apply false // 서브모듈에서 선택적으로 활성화
+    id 'io.spring.dependency-management' version '1.1.7' apply false // 서브모듈에서 의존성 관리
+}
+
+group = 'project.redis'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+
+    tasks.named('test') {
+        useJUnitPlatform() // JUnit Platform 사용
+    }
+}
