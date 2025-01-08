@@ -1,0 +1,29 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    enabled = true
+}
+
+bootRun {
+    enabled = true
+}
+
+
+group = 'project.redis.presentation'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    implementation project(':module-application')
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+test {
+    useJUnitPlatform()
+}
