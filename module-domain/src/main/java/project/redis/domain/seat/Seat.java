@@ -1,5 +1,4 @@
-package project.redis.application.domain;
-
+package project.redis.domain.seat;
 
 import java.util.UUID;
 import lombok.AccessLevel;

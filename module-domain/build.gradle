@@ -1,0 +1,8 @@
+jar {
+    enabled = true
+}
+
+group = 'project.redis.domain'
+version = '0.0.1-SNAPSHOT'
+
+

@@ -1,4 +1,4 @@
-package project.redis.application.domain;
+package project.redis.domain.screening;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
