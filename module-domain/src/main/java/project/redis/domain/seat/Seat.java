@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
+import project.redis.domain.cinema.Cinema;
 
 @Getter
 @Value
@@ -12,9 +13,9 @@ import lombok.Value;
 public class Seat {
     UUID seatId;
     String seatNumber;
-    UUID cinemaId;
+    Cinema cinema;
 
-    public static Seat generateSeat(UUID seatId, String seatNumber, UUID cinemaId) {
-        return new Seat(seatId, seatNumber, cinemaId);
+    public static Seat generateSeat(UUID seatId, String seatNumber, Cinema cinema) {
+        return new Seat(seatId, seatNumber, cinema);
     }
 }

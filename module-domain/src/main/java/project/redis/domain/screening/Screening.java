@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
+import project.redis.domain.cinema.Cinema;
+import project.redis.domain.movie.Movie;
 
 @Getter
 @Value
@@ -14,13 +16,13 @@ public class Screening {
     UUID screeningId;
     LocalDateTime screenStartTime;
     LocalDateTime screenEndTime;
-    UUID movieId;
-    UUID cinemaId;
+    Movie movie;
+    Cinema cinema;
 
     public static Screening generateScreening(
             UUID screeningId,
             LocalDateTime screenStartTime, LocalDateTime screenEndTime,
-            UUID movieId, UUID cinemaId) {
-        return new Screening(screeningId, screenStartTime, screenEndTime, movieId, cinemaId);
+            Movie movie, Cinema cinema) {
+        return new Screening(screeningId, screenStartTime, screenEndTime, movie, cinema);
     }
 }

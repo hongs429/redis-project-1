@@ -14,7 +14,6 @@ bootRun {
     enabled = false
 }
 
-
 group = 'project.redis.infrastructure'
 version = '0.0.1-SNAPSHOT'
 
@@ -22,8 +21,8 @@ version = '0.0.1-SNAPSHOT'
 dependencies {
     implementation project(':module-domain')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter'
     runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-mysql'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
