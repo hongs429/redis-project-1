@@ -4,9 +4,11 @@ package project.redis.infrastructure.movie.entity;
 import static jakarta.persistence.EnumType.STRING;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -55,6 +57,7 @@ public class MovieJpaEntity extends BaseJpaEntity {
     private int runningMinTime;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "genre_id", columnDefinition = "BINARY(16)")
+    @JoinColumn(name = "genre_id", columnDefinition = "BINARY(16)",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private GenreJpaEntity genre;
 }

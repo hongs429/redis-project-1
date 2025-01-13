@@ -2,8 +2,10 @@ package project.redis.infrastructure.seat.entity;
 
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -36,6 +38,7 @@ public class SeatJpaEntity extends BaseJpaEntity {
     private String seatNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinema_id", columnDefinition = "BINARY(16)")
+    @JoinColumn(name = "cinema_id", columnDefinition = "BINARY(16)",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private CinemaJpaEntity cinema;
 }

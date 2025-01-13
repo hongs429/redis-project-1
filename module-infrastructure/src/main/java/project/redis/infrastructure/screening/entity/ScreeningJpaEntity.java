@@ -2,8 +2,10 @@ package project.redis.infrastructure.screening.entity;
 
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -42,10 +44,12 @@ public class ScreeningJpaEntity extends BaseJpaEntity {
     private LocalDateTime screeningEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", columnDefinition = "BINARY(16)")
+    @JoinColumn(name = "movie_id", columnDefinition = "BINARY(16)",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private MovieJpaEntity movie;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinema_id", columnDefinition = "BINARY(16)")
+    @JoinColumn(name = "cinema_id", columnDefinition = "BINARY(16)",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private CinemaJpaEntity cinema;
 }
