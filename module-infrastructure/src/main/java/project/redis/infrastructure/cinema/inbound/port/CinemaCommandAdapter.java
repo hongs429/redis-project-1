@@ -14,7 +14,7 @@ public class CinemaCommandAdapter implements CinemaCommandPort {
     private final CinemaJpaRepository cinemaJpaRepository;
 
     @Override
-    public void createCinema(String cinemaName) {
+    public void createCinema(String cinemaName) throws IllegalArgumentException {
         Optional<CinemaJpaEntity> cinemaOptional = cinemaJpaRepository.findByCinemaName(cinemaName);
 
         //TODO: 예외 처리를 담당하는 Exception, ExceptionHandler를 모아두는 모듈 필요
