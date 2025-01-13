@@ -23,6 +23,12 @@ public class Screening {
             UUID screeningId,
             LocalDateTime screenStartTime, LocalDateTime screenEndTime,
             Movie movie, Cinema cinema) {
+        assert screeningId != null;
+        assert screenStartTime != null;
+        assert screenEndTime != null;
+        assert movie != null;
+        assert cinema != null;
+
         return new Screening(screeningId, screenStartTime, screenEndTime, movie, cinema);
     }
 }
