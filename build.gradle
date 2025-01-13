@@ -11,19 +11,20 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom 'org.springframework.boot:spring-boot-dependencies:3.4.1'
-    }
-}
-
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'
 
     java {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:3.4.1'
+        }
     }
 
     configurations {
@@ -44,15 +45,19 @@ subprojects {
 
         testCompileOnly 'org.projectlombok:lombok:1.18.36'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
 
-    test {
-        useJUnitPlatform()
+    tasks {
+        test {
+            useJUnitPlatform()
+        }
     }
 }
+
 
 
 jar {
