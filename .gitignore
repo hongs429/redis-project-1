@@ -37,3 +37,6 @@ out/
 .vscode/
 
 docker/db/
+docker/influxdb/
+docker/grafana/
+node_modules/
