@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.redis.application.cinema.port.inbound.CinemaCommandUseCase;
 import project.redis.application.cinema.port.inbound.CinemaCreateCommandParam;
-import project.redis.infrastructure.cinema.inbound.port.CinemaCommandPort;
+import project.redis.application.cinema.port.outbound.CinemaCommandPort;
 
 
 @Service

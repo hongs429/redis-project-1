@@ -1,4 +1,4 @@
-package project.redis.infrastructure.screening.inbound;
+package project.redis.infrastructure.screening.adapter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import project.redis.domain.screening.Screening;
 import project.redis.infrastructure.screening.entity.ScreeningJpaEntity;
-import project.redis.infrastructure.screening.inbound.port.inbound.ScreeningQueryPort;
+import project.redis.application.screening.port.outbound.ScreeningQueryPort;
 import project.redis.infrastructure.screening.mapper.ScreeningInfraMapper;
 import project.redis.infrastructure.screening.repository.ScreeningJpaRepository;
 

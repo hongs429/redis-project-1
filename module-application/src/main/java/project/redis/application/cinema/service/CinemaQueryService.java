@@ -4,8 +4,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.redis.application.cinema.port.inbound.CinemaQueryUseCase;
+import project.redis.application.cinema.port.outbound.CinemaQueryPort;
 import project.redis.domain.cinema.Cinema;
-import project.redis.infrastructure.cinema.inbound.port.CinemaQueryPort;
 
 
 @Service

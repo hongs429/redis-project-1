@@ -1,4 +1,4 @@
-package project.redis.infrastructure.screening.inbound.port.inbound;
+package project.redis.application.screening.port.outbound;
 
 import java.util.List;
 import project.redis.domain.screening.Screening;

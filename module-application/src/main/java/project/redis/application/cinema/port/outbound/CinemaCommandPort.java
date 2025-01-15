@@ -1,4 +1,4 @@
-package project.redis.infrastructure.cinema.inbound.port;
+package project.redis.application.cinema.port.outbound;
 
 public interface CinemaCommandPort {
 

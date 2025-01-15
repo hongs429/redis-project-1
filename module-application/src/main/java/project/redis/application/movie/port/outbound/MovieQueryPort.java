@@ -1,4 +1,4 @@
-package project.redis.infrastructure.movie.inbound.port;
+package project.redis.application.movie.port.outbound;
 
 import java.util.List;
 import project.redis.domain.movie.Movie;

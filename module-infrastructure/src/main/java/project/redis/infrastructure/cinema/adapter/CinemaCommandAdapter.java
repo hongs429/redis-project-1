@@ -1,9 +1,10 @@
-package project.redis.infrastructure.cinema.inbound.port;
+package project.redis.infrastructure.cinema.adapter;
 
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import project.redis.application.cinema.port.outbound.CinemaCommandPort;
 import project.redis.infrastructure.cinema.entity.CinemaJpaEntity;
 import project.redis.infrastructure.cinema.repository.CinemaJpaRepository;
 

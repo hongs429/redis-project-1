@@ -1,11 +1,11 @@
-package project.redis.infrastructure.movie.inbound;
+package project.redis.infrastructure.movie.adapter;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import project.redis.domain.movie.Movie;
 import project.redis.infrastructure.movie.entity.MovieJpaEntity;
-import project.redis.infrastructure.movie.inbound.port.MovieQueryPort;
+import project.redis.application.movie.port.outbound.MovieQueryPort;
 import project.redis.infrastructure.movie.mapper.MovieInfraMapper;
 import project.redis.infrastructure.movie.repository.MovieJpaRepository;
 

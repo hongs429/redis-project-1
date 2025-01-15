@@ -5,8 +5,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.redis.application.movie.port.inbound.MovieQueryUseCase;
+import project.redis.application.movie.port.outbound.MovieQueryPort;
 import project.redis.domain.movie.Movie;
-import project.redis.infrastructure.movie.inbound.port.MovieQueryPort;
 
 @Service
 @RequiredArgsConstructor

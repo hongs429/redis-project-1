@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.redis.application.cinema.port.inbound.CinemaCreateCommandParam;
-import project.redis.infrastructure.cinema.inbound.port.CinemaCommandPort;
+import project.redis.application.cinema.port.outbound.CinemaCommandPort;
 
 @ExtendWith(MockitoExtension.class)
 class CinemaCommandServiceTest {
