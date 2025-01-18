@@ -47,7 +47,7 @@ subprojects {
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 
