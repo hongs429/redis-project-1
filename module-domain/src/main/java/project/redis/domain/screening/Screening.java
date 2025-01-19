@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 import project.redis.domain.cinema.Cinema;
 import project.redis.domain.movie.Movie;
@@ -12,6 +13,7 @@ import project.redis.domain.movie.Movie;
 @Getter
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true)
 public class Screening {
     UUID screeningId;
     LocalDateTime screenStartTime;

@@ -15,18 +15,46 @@ import project.redis.presentation.screening.dto.response.GroupedScreeningRespons
 import project.redis.presentation.screening.mapper.ScreeningAppMapper;
 
 @RestController
-@RequestMapping("/api/v1/screenings")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ScreeningController {
 
     private final ScreeningQueryUseCase screeningQueryUseCase;
 
-    @GetMapping
+    @GetMapping("/v1/screenings")
     public ResponseEntity<List<GroupedScreeningResponse>> getScreenings(ScreeningsQueryRequest request) {
 
         List<Screening> screenings = screeningQueryUseCase.getScreenings(
                 ScreeningsQueryParam.builder()
                         .maxScreeningDay(request.getMaxScreeningDay())
+                        .genreName(request.getGenreName())
+                        .movieName(request.getMovieName())
+                        .build()
+        );
+
+        return ResponseEntity.ok(ScreeningAppMapper.toGroupedScreeningResponse(screenings));
+    }
+
+//    @GetMapping("/v2/screenings/local-caching")
+//    public ResponseEntity<List<GroupedScreeningResponse>> getScreeningsLocalCaching(ScreeningsQueryRequest request) {
+//        List<Screening> screenings = screeningQueryUseCase.getScreenings(
+//                ScreeningsQueryParam.builder()
+//                        .maxScreeningDay(request.getMaxScreeningDay())
+//                        .genreName(request.getGenreName())
+//                        .movieName(request.getMovieName())
+//                        .build()
+//        );
+//
+//        return ResponseEntity.ok(ScreeningAppMapper.toGroupedScreeningResponse(screenings));
+//    }
+
+    @GetMapping("/v3/screenings/redis")
+    public ResponseEntity<List<GroupedScreeningResponse>> getScreeningsRedis(ScreeningsQueryRequest request) {
+        List<Screening> screenings = screeningQueryUseCase.getScreeningsRedis(
+                ScreeningsQueryParam.builder()
+                        .maxScreeningDay(request.getMaxScreeningDay())
+                        .genreName(request.getGenreName())
+                        .movieName(request.getMovieName())
                         .build()
         );
 

@@ -1,15 +1,21 @@
 package project.redis.infrastructure.screening.adapter;
 
+import static project.redis.infrastructure.common.config.RedisConfig.REDIS_SCREENING;
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import project.redis.application.screening.port.outbound.ScreeningQueryFilter;
+import project.redis.application.screening.port.outbound.ScreeningQueryPort;
 import project.redis.domain.screening.Screening;
 import project.redis.infrastructure.screening.entity.ScreeningJpaEntity;
-import project.redis.application.screening.port.outbound.ScreeningQueryPort;
 import project.redis.infrastructure.screening.mapper.ScreeningInfraMapper;
 import project.redis.infrastructure.screening.repository.ScreeningJpaRepository;
+import project.redis.domain.screening.Screenings;
 
 
 @Transactional(readOnly = true)
@@ -20,15 +26,52 @@ public class ScreeningQueryAdapter implements ScreeningQueryPort {
     private final ScreeningJpaRepository screeningJpaRepository;
 
     @Override
-    public List<Screening> getScreenings(int maxScreeningDay) {
+    public List<Screening> getScreenings(ScreeningQueryFilter filter) {
 
-        LocalDate maxScreeningDate = LocalDate.now().plusDays(maxScreeningDay);
+        LocalDate maxScreeningDate = LocalDate.now().plusDays(filter.getMaxScreeningDay());
 
-        List<ScreeningJpaEntity> screenings
-                = screeningJpaRepository.findAllOrderByReleaseDescAndScreenStartTimeAsc(maxScreeningDate);
+        List<ScreeningJpaEntity> screeningsByFilter = screeningJpaRepository.findScreeningsByFilter(
+                maxScreeningDate,
+                filter.getGenreName(),
+                filter.getMovieName()
+        );
 
-        return screenings.stream()
+        return screeningsByFilter.stream()
                 .map(ScreeningInfraMapper::toScreening)
                 .toList();
     }
+
+    @Override
+    @Cacheable(value = REDIS_SCREENING, cacheManager = "redisCacheManager", keyGenerator = "screeningKeyGenerator")
+    public Screenings getScreeningsRedis(ScreeningQueryFilter filter) {
+        LocalDate maxScreeningDate = LocalDate.now().plusDays(filter.getMaxScreeningDay());
+
+        List<ScreeningJpaEntity> screeningsByFilter = screeningJpaRepository.findScreeningsByFilter(
+                maxScreeningDate,
+                filter.getGenreName(),
+                filter.getMovieName()
+        );
+
+        List<Screening> screeningList = screeningsByFilter.stream()
+                .map(ScreeningInfraMapper::toScreening)
+                .collect(Collectors.toList());
+
+        return new Screenings(screeningList);
+    }
+
+//    @Override
+//    @Cacheable(value = REDIS_SCREENING, cacheManager = "localCacheManager", keyGenerator = "screeningKeyGenerator")
+//    public List<Screening> getScreeningsLocalCache(ScreeningQueryFilter filter) {
+//        LocalDate maxScreeningDate = LocalDate.now().plusDays(filter.getMaxScreeningDay());
+//
+//        List<ScreeningJpaEntity> screeningsByFilter = screeningJpaRepository.findScreeningsByFilter(
+//                maxScreeningDate,
+//                filter.getGenreName(),
+//                filter.getMovieName()
+//        );
+//
+//        return screeningsByFilter.stream()
+//                .map(ScreeningInfraMapper::toScreening)
+//                .toList();
+//    }
 }

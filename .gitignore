@@ -40,3 +40,4 @@ docker/db/
 docker/influxdb/
 docker/grafana/
 node_modules/
+src/main/generated/

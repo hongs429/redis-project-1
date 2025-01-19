@@ -3,4 +3,5 @@ include 'module-application'
 include 'module-presentation'
 include 'module-infrastructure'
 include 'module-domain'
+include 'module-common'
 

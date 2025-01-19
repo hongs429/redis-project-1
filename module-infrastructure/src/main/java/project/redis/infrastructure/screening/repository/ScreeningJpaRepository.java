@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import project.redis.infrastructure.screening.entity.ScreeningJpaEntity;
 
-public interface ScreeningJpaRepository extends JpaRepository<ScreeningJpaEntity, UUID> {
+public interface ScreeningJpaRepository extends JpaRepository<ScreeningJpaEntity, UUID>, ScreeningJpaRepositoryCustom {
 
     @Query("select s from ScreeningJpaEntity s "
             + "left join fetch s.movie m "

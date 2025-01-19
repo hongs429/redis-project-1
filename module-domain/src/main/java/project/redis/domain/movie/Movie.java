@@ -5,12 +5,14 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 import project.redis.domain.genre.Genre;
 
 @Getter
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true)
 public class Movie {
     UUID movieId;
     String title;
