@@ -35,18 +35,18 @@ public class ScreeningController {
         return ResponseEntity.ok(ScreeningAppMapper.toGroupedScreeningResponse(screenings));
     }
 
-//    @GetMapping("/v2/screenings/local-caching")
-//    public ResponseEntity<List<GroupedScreeningResponse>> getScreeningsLocalCaching(ScreeningsQueryRequest request) {
-//        List<Screening> screenings = screeningQueryUseCase.getScreenings(
-//                ScreeningsQueryParam.builder()
-//                        .maxScreeningDay(request.getMaxScreeningDay())
-//                        .genreName(request.getGenreName())
-//                        .movieName(request.getMovieName())
-//                        .build()
-//        );
-//
-//        return ResponseEntity.ok(ScreeningAppMapper.toGroupedScreeningResponse(screenings));
-//    }
+    @GetMapping("/v2/screenings/local-caching")
+    public ResponseEntity<List<GroupedScreeningResponse>> getScreeningsLocalCaching(ScreeningsQueryRequest request) {
+        List<Screening> screenings = screeningQueryUseCase.getScreenings(
+                ScreeningsQueryParam.builder()
+                        .maxScreeningDay(request.getMaxScreeningDay())
+                        .genreName(request.getGenreName())
+                        .movieName(request.getMovieName())
+                        .build()
+        );
+
+        return ResponseEntity.ok(ScreeningAppMapper.toGroupedScreeningResponse(screenings));
+    }
 
     @GetMapping("/v3/screenings/redis")
     public ResponseEntity<List<GroupedScreeningResponse>> getScreeningsRedis(ScreeningsQueryRequest request) {

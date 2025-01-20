@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public class RedisConfig {
     @Value("${redis.port}")
     private int port;
 
-    public final static String REDIS_SCREENING = "redis-screening";
+    public final static String REDIS_SCREENING = "SCREENING";
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -53,31 +52,25 @@ public class RedisConfig {
     @Bean("redisCacheManager")
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
 
-        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator
-                .builder()
-                .allowIfSubType("java.util.ArrayList")
-                .build();
-
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY
-//                        LaissezFaireSubTypeValidator.instance,
-//                        ObjectMapper.DefaultTyping.NON_FINAL,
-//                        JsonTypeInfo.As.PROPERTY
+                .activateDefaultTyping(
+                        LaissezFaireSubTypeValidator.instance,
+                        ObjectMapper.DefaultTyping.NON_FINAL,
+                        JsonTypeInfo.As.PROPERTY
                 );
 
 
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         cacheConfigurations.put(REDIS_SCREENING, RedisCacheConfiguration.defaultCacheConfig()
-                .prefixCacheNameWith(REDIS_SCREENING)
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
                 )
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(
-                                new GenericJackson2JsonRedisSerializer(/*objectMapper*/)
+                                new GenericJackson2JsonRedisSerializer(objectMapper)
                         )
                 )
                 .entryTtl(Duration.ofDays(1))
@@ -90,7 +83,7 @@ public class RedisConfig {
                                         .fromSerializer(new StringRedisSerializer()))
                                 .serializeValuesWith(
                                         SerializationPair.fromSerializer(
-                                                new GenericJackson2JsonRedisSerializer(/*objectMapper*/)
+                                                new GenericJackson2JsonRedisSerializer(objectMapper)
                                         )
                                 )
                                 .entryTtl(Duration.ofHours(1))
@@ -103,7 +96,6 @@ public class RedisConfig {
     public KeyGenerator screeningKeyGenerator() {
         return (target, method, params) -> {
             ScreeningQueryFilter filter = (ScreeningQueryFilter) params[0];
-
             String movieName = filter.getMovieName() != null ? filter.getMovieName() : "ALL";
             String genreName = filter.getGenreName() != null ? filter.getGenreName() : "ALL";
             return "maxDays:" + filter.getMaxScreeningDay() +
