@@ -3,6 +3,7 @@ package project.redis.application.reservation.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
@@ -71,8 +72,7 @@ class ReservationCommandServiceTest {
 
         List<UUID> seatIds = seats.stream().map(Seat::getSeatId).toList();
 
-        Assertions.assertThatThrownBy(
-                () -> new ReserveCommandParam(seatIds, UUID.randomUUID(), "user"));
+        assertThrows(ConstraintViolationException.class, () -> new ReserveCommandParam(seatIds, UUID.randomUUID(), "user"));
     }
 
     @Test
@@ -100,7 +100,7 @@ class ReservationCommandServiceTest {
                 null, null, null, null, List.of(seat1, seat2));
 
         when(seatQueryPort.getSeats(List.of(seat2Id, seat4Id))).thenReturn(List.of(seat3, seat4));
-        when(reservationQueryPort.getReservations(param.getUserName(), screeningId)).thenReturn(List.of(reservation));
+        when(reservationQueryPort.getReservations(screeningId)).thenReturn(List.of(reservation));
 
 
         assertThrows(DataInvalidException.class, () -> reservationCommandService.reserve(param));
@@ -134,7 +134,7 @@ class ReservationCommandServiceTest {
 
         // when
         when(seatQueryPort.getSeats(List.of(seat6.getSeatId()))).thenReturn(List.of(seat6));
-        when(reservationQueryPort.getReservations(param.getUserName(), screeningId)).thenReturn(List.of(reservation));
+        when(reservationQueryPort.getReservations(screeningId)).thenReturn(List.of(reservation));
 
 
         assertThrows(DataInvalidException.class, () -> reservationCommandService.reserve(param));

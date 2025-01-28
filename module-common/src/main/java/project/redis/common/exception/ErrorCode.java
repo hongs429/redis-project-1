@@ -25,6 +25,9 @@ public class ErrorCode {
     public static final ErrorCode SEAT_EXCEED_COUNT = new ErrorCode(
             "SEAT.ERROR.EXCEED_COUNT"
     );
+    public static final ErrorCode SEAT_ALREADY_RESERVED = new ErrorCode(
+            "SEAT.ERROR.ALREADY_RESERVED"
+    );
 
     /* SCREENING */
     public static ErrorCode SCREENING_REQUIRED_LATER_NOW = new ErrorCode(

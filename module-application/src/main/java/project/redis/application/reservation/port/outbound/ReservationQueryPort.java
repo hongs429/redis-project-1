@@ -6,5 +6,5 @@ import project.redis.domain.reservation.Reservation;
 
 public interface ReservationQueryPort {
 
-    List<Reservation> getReservations(String username, UUID screeningId);
+    List<Reservation> getReservations(UUID screeningId);
 }

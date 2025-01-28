@@ -15,4 +15,12 @@ public interface ReservationJpaRepository extends JpaRepository<ReservationJpaEn
             "screening.cinema"
     })
     List<ReservationJpaEntity> findByUsernameAndScreeningId(String username, UUID screeningId);
+
+    @EntityGraph(attributePaths = {
+            "screening",
+            "screening.movie",
+            "screening.movie.genre",
+            "screening.cinema"
+    })
+    List<ReservationJpaEntity> findByScreeningId(UUID screeningId);
 }

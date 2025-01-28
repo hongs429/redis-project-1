@@ -28,12 +28,11 @@ public class ReservationQueryAdapter implements ReservationQueryPort {
     private final ReservationSeatJpaRepository reservationSeatJpaRepository;
 
     @Override
-    public List<Reservation> getReservations(String username, UUID screeningId) {
+    public List<Reservation> getReservations(UUID screeningId) {
         List<ReservationJpaEntity> reservations
-                = reservationJpaRepository.findByUsernameAndScreeningId(username, screeningId);
+                = reservationJpaRepository.findByScreeningId(screeningId);
 
         // 예약을 가지고 좌석 전부 가져오기
-
         Map<UUID, List<ReservationSeatJpaEntity>> reservationIdToEntitiesMap
                 = reservationSeatJpaRepository.findByReservationIn(
                         reservations).stream()
