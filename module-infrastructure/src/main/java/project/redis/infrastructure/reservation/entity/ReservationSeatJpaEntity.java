@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,11 +20,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import project.redis.infrastructure.common.entity.BaseJpaEntity;
+import project.redis.infrastructure.screening.entity.ScreeningJpaEntity;
 import project.redis.infrastructure.seat.entity.SeatJpaEntity;
 
 @Entity
 @Builder
-@Table(name = "reservation_seat")
+@Table(name = "reservation_seat", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "UK_screening_seat",
+                columnNames = {"screening_id", "seat_id"}
+        )
+})
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +45,10 @@ public class ReservationSeatJpaEntity extends BaseJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ReservationJpaEntity reservation;
+
+    @ManyToOne
+    @JoinColumn(name = "screening_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private ScreeningJpaEntity screening;
 
     @ManyToOne
     @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))

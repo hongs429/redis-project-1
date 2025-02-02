@@ -34,6 +34,8 @@ public class QReservationSeatJpaEntity extends EntityPathBase<ReservationSeatJpa
 
     public final QReservationJpaEntity reservation;
 
+    public final project.redis.infrastructure.screening.entity.QScreeningJpaEntity screening;
+
     public final project.redis.infrastructure.seat.entity.QSeatJpaEntity seat;
 
     //inherited
@@ -61,6 +63,7 @@ public class QReservationSeatJpaEntity extends EntityPathBase<ReservationSeatJpa
     public QReservationSeatJpaEntity(Class<? extends ReservationSeatJpaEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.reservation = inits.isInitialized("reservation") ? new QReservationJpaEntity(forProperty("reservation"), inits.get("reservation")) : null;
+        this.screening = inits.isInitialized("screening") ? new project.redis.infrastructure.screening.entity.QScreeningJpaEntity(forProperty("screening"), inits.get("screening")) : null;
         this.seat = inits.isInitialized("seat") ? new project.redis.infrastructure.seat.entity.QSeatJpaEntity(forProperty("seat"), inits.get("seat")) : null;
     }
 

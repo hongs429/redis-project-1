@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import project.redis.application.reservation.port.outbound.ReservationQueryPort;
 import project.redis.domain.reservation.Reservation;
 import project.redis.domain.seat.Seat;
@@ -29,34 +30,34 @@ public class ReservationQueryAdapter implements ReservationQueryPort {
 
     @Override
     public List<Reservation> getReservations(UUID screeningId) {
-        List<ReservationJpaEntity> reservations
-                = reservationJpaRepository.findByScreeningId(screeningId);
+        List<ReservationJpaEntity> reservations = reservationJpaRepository.findAllByScreeningId(screeningId);
 
-        // 예약을 가지고 좌석 전부 가져오기
-        Map<UUID, List<ReservationSeatJpaEntity>> reservationIdToEntitiesMap
-                = reservationSeatJpaRepository.findByReservationIn(
-                        reservations).stream()
+        if (CollectionUtils.isEmpty(reservations)) {
+            return List.of();
+        }
+
+        List<ReservationSeatJpaEntity> reservationSeats = reservationSeatJpaRepository.findByScreeningId(screeningId);
+
+        Map<UUID, List<ReservationSeatJpaEntity>> reservationIdToEntityMap = reservationSeats.stream()
                 .collect(Collectors.groupingBy(
-                        entity -> entity.getReservation().getId()
-                ));
+                        reservationSeatJpaEntity -> reservationSeatJpaEntity.getReservation().getId()));
 
         return reservations.stream()
-                .map(reservationJpaEntity -> {
-                    List<Seat> seats = reservationIdToEntitiesMap.get(reservationJpaEntity.getId()).stream()
+                .map(reservation -> {
+                    List<Seat> seats = reservationIdToEntityMap.get(reservation.getId()).stream()
                             .map(ReservationSeatJpaEntity::getSeat)
                             .map(SeatInfraMapper::toSeat)
                             .toList();
 
-                    ScreeningJpaEntity screening = reservationJpaEntity.getScreening();
+                    ScreeningJpaEntity screening = reservation.getScreening();
 
                     return Reservation.generateReservation(
-                            reservationJpaEntity.getId(),
-                            reservationJpaEntity.getReservationTime(),
-                            reservationJpaEntity.getUsername(),
+                            reservation.getId(),
+                            reservation.getReservationTime(),
+                            reservation.getUsername(),
                             ScreeningInfraMapper.toScreening(screening),
                             seats
                     );
-
                 })
                 .toList();
     }

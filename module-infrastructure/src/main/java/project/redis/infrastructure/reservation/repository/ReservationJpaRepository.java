@@ -7,20 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import project.redis.infrastructure.reservation.entity.ReservationJpaEntity;
 
 public interface ReservationJpaRepository extends JpaRepository<ReservationJpaEntity, UUID> {
-
     @EntityGraph(attributePaths = {
             "screening",
             "screening.movie",
-            "screening.movie.genre",
-            "screening.cinema"
+            "screening.cinema",
+            "screening.movie.genre"
     })
-    List<ReservationJpaEntity> findByUsernameAndScreeningId(String username, UUID screeningId);
-
-    @EntityGraph(attributePaths = {
-            "screening",
-            "screening.movie",
-            "screening.movie.genre",
-            "screening.cinema"
-    })
-    List<ReservationJpaEntity> findByScreeningId(UUID screeningId);
+    List<ReservationJpaEntity> findAllByScreeningId(UUID screeningId);
 }

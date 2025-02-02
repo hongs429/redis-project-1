@@ -11,6 +11,7 @@ import project.redis.infrastructure.reservation.entity.ReservationSeatJpaEntity;
 import project.redis.infrastructure.reservation.mapper.ReservationInfraMapper;
 import project.redis.infrastructure.reservation.repository.ReservationJpaRepository;
 import project.redis.infrastructure.reservation.repository.ReservationSeatJpaRepository;
+import project.redis.infrastructure.screening.mapper.ScreeningInfraMapper;
 import project.redis.infrastructure.seat.mapper.SeatInfraMapper;
 
 
@@ -29,6 +30,7 @@ public class ReservationCommandAdapter implements ReservationCommandPort {
         for (Seat seat : reservation.getSeats()) {
             ReservationSeatJpaEntity reservationSeat = ReservationSeatJpaEntity.builder()
                     .reservation(savedReservation)
+                    .screening(ScreeningInfraMapper.toEntity(reservation.getScreening()))
                     .seat(SeatInfraMapper.toEntity(seat))
                     .build();
 
