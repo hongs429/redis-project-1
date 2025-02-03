@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +48,12 @@ public class ReservationCommandServiceIntegrationTest extends TestContainerSuppo
     private final ReservationSeatJpaRepository reservationSeatJpaRepository;
     private final ScreeningJpaRepository screeningJpaRepository;
     private final SeatJpaRepository seatJpaRepository;
+
+    @AfterEach
+    void tearDown() {
+        reservationSeatJpaRepository.deleteAll();
+        reservationJpaRepository.deleteAll();
+    }
 
     @DisplayName("상영 예약 동시성 테스트")
     @Test
