@@ -54,50 +54,53 @@ public class ReservationCommandService implements ReservationCommandUseCase {
             throw new DataInvalidException(ErrorCode.SEAT_ALREADY_RESERVED, param.getSeatIds().toString());
         }
 
-        // 연속된 좌석인지 여부
-        List<Seat> seats = seatQueryPort.getSeats(param.getSeatIds());
-        if (!Seat.isSeries(seats)) {
-            throw new DataInvalidException(ErrorCode.SEAT_REQUIRED_SERIES);
+        try {
+            // 연속된 좌석인지 여부
+            List<Seat> seats = seatQueryPort.getSeats(param.getSeatIds());
+            if (!Seat.isSeries(seats)) {
+                throw new DataInvalidException(ErrorCode.SEAT_REQUIRED_SERIES);
+            }
+
+            // 예약 가져오기
+            List<Reservation> originReservations = reservationQueryPort.getReservations(param.getScreeningId());
+
+            List<UUID> seatList = originReservations.stream()
+                    .flatMap(reservation -> reservation.getSeats().stream())
+                    .map(Seat::getSeatId)
+                    .collect(Collectors.toList());
+
+            // 이미 예약이 존재하는 좌석인지 검증
+            boolean isAlreadyReservation = seatList.retainAll(param.getSeatIds());
+
+            if( isAlreadyReservation ) {
+                throw new DataInvalidException(ErrorCode.SEAT_ALREADY_RESERVED, seatList.toString());
+            }
+
+            List<Seat> originSeats = originReservations.stream()
+                    .filter(reservation -> reservation.getUsername().equals(param.getUserName()))
+                    .flatMap(reservation -> reservation.getSeats().stream())
+                    .toList();
+
+            // 이전 예약 + 현재 예약하려는 좌석의 연속성 검증 && 5개 이하의 예약 검증
+            Seat.isAvailable(originSeats, seats);
+
+            Screening screening = !CollectionUtils.isEmpty(originReservations)
+                    ? originReservations.getFirst().getScreening()
+                    : screeningQueryPort.getScreening(param.getScreeningId());
+
+            if (!screening.isLaterScreening()) {
+                throw new DataInvalidException(ErrorCode.SCREENING_REQUIRED_LATER_NOW, param.getScreeningId());
+            }
+
+            Reservation reservation
+                    = Reservation.generateReservation(
+                    null, LocalDateTime.now(), param.getUserName(), screening, seats);
+
+            reservationCommandPort.reserve(reservation);
+            return true;
+        } finally {
+            reservationLockPort.releaseMultiLock(makeLockKey(param.getScreeningId().toString(), seatIds));
         }
-
-        // 예약 가져오기
-        List<Reservation> originReservations = reservationQueryPort.getReservations(param.getScreeningId());
-
-        List<UUID> seatList = originReservations.stream()
-                .flatMap(reservation -> reservation.getSeats().stream())
-                .map(Seat::getSeatId)
-                .collect(Collectors.toList());
-
-        // 이미 예약이 존재하는 좌석인지 검증
-        boolean isAlreadyReservation = seatList.retainAll(param.getSeatIds());
-
-        if( isAlreadyReservation ) {
-            throw new DataInvalidException(ErrorCode.SEAT_ALREADY_RESERVED, seatList.toString());
-        }
-
-        List<Seat> originSeats = originReservations.stream()
-                .filter(reservation -> reservation.getUsername().equals(param.getUserName()))
-                .flatMap(reservation -> reservation.getSeats().stream())
-                .toList();
-
-        // 이전 예약 + 현재 예약하려는 좌석의 연속성 검증 && 5개 이하의 예약 검증
-        Seat.isAvailable(originSeats, seats);
-
-        Screening screening = !CollectionUtils.isEmpty(originReservations)
-        ? originReservations.getFirst().getScreening()
-        : screeningQueryPort.getScreening(param.getScreeningId());
-
-        if (!screening.isLaterScreening()) {
-            throw new DataInvalidException(ErrorCode.SCREENING_REQUIRED_LATER_NOW, param.getScreeningId());
-        }
-
-        Reservation reservation
-                = Reservation.generateReservation(
-                        null, LocalDateTime.now(), param.getUserName(), screening, seats);
-
-        reservationCommandPort.reserve(reservation);
-        reservationLockPort.releaseMultiLock(makeLockKey(param.getScreeningId().toString(), seatIds));
-        return true;
     }
 
     private List<String> makeLockKey(String screeningId, List<String> list) {
