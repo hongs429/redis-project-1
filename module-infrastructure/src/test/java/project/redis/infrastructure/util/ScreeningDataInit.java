@@ -1,4 +1,4 @@
-package project.redis.infrastructure.reservation.util;
+package project.redis.infrastructure.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

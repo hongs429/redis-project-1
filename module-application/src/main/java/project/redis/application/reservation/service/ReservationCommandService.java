@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import project.redis.application.reservation.port.inbound.ReservationCommandUseCase;
 import project.redis.application.reservation.port.inbound.ReserveCommandParam;
 import project.redis.application.reservation.port.outbound.ReservationCommandPort;
+import project.redis.application.reservation.port.outbound.ReservationLockPort;
 import project.redis.application.reservation.port.outbound.ReservationQueryPort;
 import project.redis.application.screening.port.outbound.ScreeningQueryPort;
 import project.redis.application.seat.port.outbound.SeatQueryPort;
@@ -20,6 +22,7 @@ import project.redis.domain.screening.Screening;
 import project.redis.domain.seat.Seat;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationCommandService implements ReservationCommandUseCase {
@@ -28,6 +31,9 @@ public class ReservationCommandService implements ReservationCommandUseCase {
     private final ReservationQueryPort reservationQueryPort;
     private final ScreeningQueryPort screeningQueryPort;
     private final ReservationCommandPort reservationCommandPort;
+
+    private final ReservationLockPort reservationLockPort;
+
     /*
     적용 비지니스 규칙
     1. 들어온 좌석은 연속된 좌석이어야 한다.
@@ -37,6 +43,17 @@ public class ReservationCommandService implements ReservationCommandUseCase {
      */
     @Override
     public boolean reserve(ReserveCommandParam param) {
+        List<String> seatIds = param.getSeatIds().stream().map(String::valueOf).toList();
+        boolean lock = reservationLockPort.tryScreeningSeatLock(
+                makeLockKey(param.getScreeningId().toString(), seatIds),
+                20,
+                1000);
+
+        if (!lock) {
+            log.info("locking screening for seat {} failed", param.getScreeningId());
+            throw new DataInvalidException(ErrorCode.SEAT_ALREADY_RESERVED, param.getSeatIds().toString());
+        }
+
         // 연속된 좌석인지 여부
         List<Seat> seats = seatQueryPort.getSeats(param.getSeatIds());
         if (!Seat.isSeries(seats)) {
@@ -79,7 +96,13 @@ public class ReservationCommandService implements ReservationCommandUseCase {
                         null, LocalDateTime.now(), param.getUserName(), screening, seats);
 
         reservationCommandPort.reserve(reservation);
-
+        reservationLockPort.releaseMultiLock(makeLockKey(param.getScreeningId().toString(), seatIds));
         return true;
+    }
+
+    private List<String> makeLockKey(String screeningId, List<String> list) {
+        return list.stream()
+                .map(seatId -> "reservation-lock:" + screeningId + ":" + seatId)
+                .toList();
     }
 }

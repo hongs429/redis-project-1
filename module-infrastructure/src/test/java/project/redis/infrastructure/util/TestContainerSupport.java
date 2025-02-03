@@ -1,4 +1,4 @@
-package project.redis.infrastructure.reservation.util;
+package project.redis.infrastructure.util;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
